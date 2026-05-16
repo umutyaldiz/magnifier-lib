@@ -1,0 +1,33 @@
+{
+  "name": "magnifier-js",
+  "version": "1.0.0",
+  "description": "Mouse takipli, şekil seçilebilir büyüteç kütüphanesi — görme zorluğu yaşayan kullanıcılar için (özellikle haber siteleri).",
+  "main": "dist/magnifier.js",
+  "browser": "dist/magnifier.js",
+  "module": "dist/magnifier.js",
+  "files": [
+    "dist/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "demo": "npx serve ."
+  },
+  "keywords": [
+    "magnifier",
+    "zoom",
+    "accessibility",
+    "a11y",
+    "low-vision",
+    "buyutec",
+    "news",
+    "haber"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}

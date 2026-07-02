@@ -1,0 +1,6 @@
+/*
+ * Tailwind v4 is imported with a `tw:` prefix so utility classes can never
+ * collide with the host page's own CSS — the same rule this library follows
+ * for its lens styles (all inline, no unprefixed global selectors).
+ */
+@import "tailwindcss" prefix(tw);

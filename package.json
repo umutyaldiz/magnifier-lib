@@ -1,18 +1,37 @@
 {
-  "name": "magnifier-js",
-  "version": "1.0.0",
-  "description": "Mouse takipli, şekil seçilebilir büyüteç kütüphanesi — görme zorluğu yaşayan kullanıcılar için (özellikle haber siteleri).",
+  "name": "a11y-magnifier",
+  "version": "2.0.0",
+  "description": "Zero-dependency, cursor-following screen magnifier widget for the web — built for low-vision accessibility on news sites and content-heavy pages.",
+  "type": "commonjs",
   "main": "dist/magnifier.js",
-  "browser": "dist/magnifier.js",
-  "module": "dist/magnifier.js",
+  "module": "dist/magnifier.mjs",
+  "browser": "dist/magnifier.global.js",
+  "unpkg": "dist/magnifier.global.min.js",
+  "jsdelivr": "dist/magnifier.global.min.js",
+  "types": "dist/magnifier.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/magnifier.d.ts",
+      "import": "./dist/magnifier.mjs",
+      "require": "./dist/magnifier.js"
+    },
+    "./global": "./dist/magnifier.global.js",
+    "./global.min": "./dist/magnifier.global.min.js",
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist/",
-    "src/",
     "README.md",
+    "README.tr.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
-    "demo": "npx serve ."
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "keywords": [
     "magnifier",
@@ -20,14 +39,36 @@
     "accessibility",
     "a11y",
     "low-vision",
-    "buyutec",
-    "news",
-    "haber"
+    "screen-magnifier",
+    "assistive-technology",
+    "wcag",
+    "typescript",
+    "no-dependencies"
   ],
-  "author": "",
+  "author": {
+    "name": "Umut Yaldız",
+    "url": "https://github.com/umutyaldiz"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/umutyaldiz/magnifier-lib#readme",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/umutyaldiz/magnifier-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/umutyaldiz/magnifier-lib/issues"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.0",
+    "@storybook/html": "^8.6.0",
+    "@storybook/html-vite": "^8.6.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "storybook": "^8.6.0",
+    "tailwindcss": "^4.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0"
   }
 }

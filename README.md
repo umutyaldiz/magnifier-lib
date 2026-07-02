@@ -1,36 +1,68 @@
-# Magnifier.js
+🇬🇧 **English** · [🇹🇷 Türkçe](README.tr.md)
 
-Haber siteleri ve görme zorluğu çeken kullanıcılar için **mouse takipli, şekil seçilebilir** bir büyüteç kütüphanesi.
+# a11y-magnifier
 
-- ⚙️ Bağımlılıksız, vanilla JS, ES6 class
-- 🎯 Mouse cursor'u takip eder; isteğe bağlı cursor gizleme
-- 🔵 Daire / kare / dikdörtgen şekil
-- 🖼️ Canvas tabanlı render (SVG foreignObject snapshot) — DOM kirletmez, GPU hızlandırmalı
-- 🎚️ Runtime'da `setOptions()` ile her şey değiştirilebilir
-- ⌨️ Klavye kısayolu (default: `Alt + M`), kapatmak için `Esc`
-- 🔁 Buton ile veya `autoStart: true` ile otomatik aktif
-- 📰 Haber sitelerinin reklam/ad-slot alanları için `excludeSelectors` desteği
+**A zero-dependency, cursor-following screen magnifier widget for the web.**
+Built for low-vision accessibility on news sites and other text-heavy pages — drop in a script tag, no build step, no framework required.
 
-## Kurulum
+[![npm version](https://img.shields.io/npm/v/a11y-magnifier.svg)](https://www.npmjs.com/package/a11y-magnifier)
+[![license: MIT](https://img.shields.io/npm/l/a11y-magnifier.svg)](LICENSE)
+[![no dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](package.json)
+[![minzipped size](https://img.shields.io/bundlephobia/minzip/a11y-magnifier)](https://bundlephobia.com/package/a11y-magnifier)
+
+**[📖 Live Storybook demo — try every option](https://umutyaldiz.github.io/magnifier-lib/)**
+
+## Why this exists
+
+Low-vision readers are a huge, under-served slice of the web's audience, and most sites have no magnification option beyond the browser's own zoom — which breaks layouts and loses the point you were reading. The alternative is usually an expensive SaaS overlay widget. This library is the free, open, embeddable middle ground: a lens that follows the cursor, keeps text sharp, and can be added to any page — including ones you don't control the build pipeline for — in one line.
+
+It doesn't replace a full accessibility audit, but a pointer-driven magnifier is concretely useful for low-vision users today, and every site should be able to add one without a procurement process.
+
+## Features
+
+- ⚙️ Zero runtime dependencies, written in TypeScript, ~11 KB minified
+- 🎯 Follows the mouse cursor; optionally hides the native cursor while active
+- 🔵 Circle, square, or rectangle lens shapes
+- 🖼️ Canvas-based rendering by default (SVG `foreignObject` snapshot → `<canvas>`) — doesn't touch the live DOM, GPU-accelerated `drawImage` zoom
+- 🎚️ Every option is live-tunable at runtime via `setOptions()`
+- ⌨️ Configurable keyboard shortcut (default `Alt+M`)
+- 🔁 Toggle from a button, or auto-enable with `autoStart: true`
+- 📰 `excludeSelectors` hides the lens over ad slots, video players, or any other region you specify
+- 📝 Full type definitions generated straight from source (`dist/magnifier.d.ts`) — no `@types` package needed
+- 📚 Full interactive Storybook covering every constructor option
+
+## Install
+
+```bash
+npm install a11y-magnifier
+```
+
+```js
+// CommonJS
+const Magnifier = require('a11y-magnifier');
+
+// ESM / bundlers (webpack, Vite, Rollup, Next.js, ...)
+import Magnifier from 'a11y-magnifier';
+```
+
+Or skip the build step entirely and load it straight from a CDN — this bundle has no module format requirements at all, it just sets `window.Magnifier`:
 
 ```html
-<script src="dist/magnifier.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/a11y-magnifier/dist/magnifier.global.min.js"></script>
+<script>
+  const mag = new Magnifier({ shape: 'circle', zoom: 2 });
+  mag.enable();
+</script>
 ```
 
-veya bir bundler ile:
+## Quick start
 
 ```js
-import Magnifier from './dist/magnifier.js';
-```
-
-## Hızlı Kullanım
-
-```js
-// Buton kontrolü
+// Button-controlled
 const mag = new Magnifier({ shape: 'circle', size: 220, zoom: 2 });
 document.getElementById('magBtn').addEventListener('click', () => mag.toggle());
 
-// Sayfa açılır açılmaz aktif
+// Active as soon as the page loads
 new Magnifier({ autoStart: true, shape: 'circle', zoom: 2.5 });
 ```
 
@@ -38,66 +70,68 @@ new Magnifier({ autoStart: true, shape: 'circle', zoom: 2.5 });
 
 ### `new Magnifier(options)`
 
-| Seçenek | Tip | Default | Açıklama |
+| Option | Type | Default | Description |
 |---|---|---|---|
-| `shape` | `'circle' \| 'square' \| 'rectangle'` | `'circle'` | Büyüteç şekli |
-| `size` | `number` | `220` | `circle` ve `square` için çap/kenar (px) |
-| `width` | `number` | `360` | `rectangle` için genişlik |
-| `height` | `number` | `220` | `rectangle` için yükseklik |
-| `zoom` | `number` | `2` | Büyütme oranı |
-| `borderWidth` | `number` | `3` | Kenar kalınlığı |
-| `borderColor` | `string` | `rgba(255,255,255,.95)` | Kenar rengi |
-| `borderStyle` | `string` | `'solid'` | CSS border-style |
-| `borderRadius` | `number` | `8` | square/rectangle köşe yumuşatma |
-| `shadow` | `string` | `'0 10px 40px ...'` | CSS box-shadow |
-| `background` | `string` | `'#ffffff'` | Lens arkaplanı |
-| `crosshair` | `boolean` | `false` | Merkezde nokta göstergesi |
-| `crosshairColor` | `string` | `rgba(255,0,0,.6)` | Crosshair rengi |
-| `autoStart` | `boolean` | `false` | Sayfa yüklenince otomatik aç |
-| `hideCursor` | `boolean` | `true` | Sayfa cursor'unu gizle |
-| `smooth` | `boolean` | `true` | Yumuşak hareket |
-| `smoothDuration` | `number` | `50` | Transition süresi (ms) |
-| `offsetX` / `offsetY` | `number` | `0` | Lens'in cursor'a göre ofseti |
-| `zIndex` | `number` | `2147483646` | Lens z-index |
-| `renderMode` | `'canvas' \| 'clone' \| 'auto'` | `'canvas'` | Render yöntemi (bkz. aşağıda) |
-| `excludeSelectors` | `string[]` | `[]` | Bu seçicilerin üzerinde lens gizlenir (örn. `['.ad-slot', '.video-ad']`) |
-| `refreshIntervalMs` | `number` | `500` | Snapshot yenileme aralığı (ms) |
-| `keyboardShortcut` | `string \| false` | `'m'` | Toggle için tuş; `false` ile kapatılır |
-| `shortcutWithCtrl` | `boolean` | `false` | Ctrl/Cmd gereksin mi |
-| `shortcutWithAlt` | `boolean` | `true` | Alt gereksin mi |
-| `shortcutWithShift` | `boolean` | `false` | Shift gereksin mi |
-| `onEnable` | `function` | `null` | Aktif olunca |
-| `onDisable` | `function` | `null` | Kapanınca |
-| `onMove` | `function` | `null` | `(x, y)` mouse koordinatları |
+| `shape` | `'circle' \| 'square' \| 'rectangle'` | `'circle'` | Lens shape |
+| `size` | `number` | `220` | Diameter/side for `circle` and `square` (px) |
+| `width` | `number` | `360` | Width for `rectangle` |
+| `height` | `number` | `220` | Height for `rectangle` |
+| `zoom` | `number` | `2` | Magnification factor |
+| `borderWidth` | `number` | `3` | Border thickness |
+| `borderColor` | `string` | `rgba(255,255,255,.95)` | Border color |
+| `borderStyle` | `string` | `'solid'` | CSS `border-style` |
+| `borderRadius` | `number` | `8` | Corner radius for square/rectangle |
+| `shadow` | `string` | `'0 10px 40px ...'` | CSS `box-shadow` |
+| `background` | `string` | `'#ffffff'` | Lens background |
+| `crosshair` | `boolean` | `false` | Show a center-point indicator |
+| `crosshairColor` | `string` | `rgba(255,0,0,.6)` | Crosshair color |
+| `autoStart` | `boolean` | `false` | Enable automatically on page load |
+| `hideCursor` | `boolean` | `true` | Hide the native page cursor while active |
+| `smooth` | `boolean` | `true` | Animate lens movement |
+| `smoothDuration` | `number` | `50` | Transition duration (ms) |
+| `offsetX` / `offsetY` | `number` | `0` | Lens offset relative to the cursor |
+| `zIndex` | `number` | `2147483646` | Lens `z-index` |
+| `renderMode` | `'canvas' \| 'clone' \| 'auto'` | `'canvas'` | Rendering strategy (see below) |
+| `excludeSelectors` | `string[]` | `[]` | Selectors under which the lens hides (e.g. `['.ad-slot', '.video-ad']`) |
+| `refreshIntervalMs` | `number` | `500` | Snapshot/clone refresh interval (ms) |
+| `keyboardShortcut` | `string \| false` | `'m'` | Key that toggles the magnifier; `false` disables it |
+| `shortcutWithCtrl` | `boolean` | `false` | Require Ctrl/Cmd |
+| `shortcutWithAlt` | `boolean` | `true` | Require Alt |
+| `shortcutWithShift` | `boolean` | `false` | Require Shift |
+| `onEnable` | `function` | `null` | Called when enabled |
+| `onDisable` | `function` | `null` | Called when disabled |
+| `onMove` | `function` | `null` | Called with `(x, y)` cursor coordinates |
 
-### `renderMode` seçeneği
+### `renderMode`
 
-| Değer | Açıklama |
+| Value | Description |
 |---|---|
-| `'canvas'` | Sayfa, SVG foreignObject aracılığıyla bir `<canvas>` snapshot'ına yazdırılır. Lens içinde ikinci bir DOM ağacı oluşmaz; büyütme `drawImage` ile GPU hızlandırmalı yapılır. **Önerilen.** |
-| `'clone'` | `document.body` klonlanarak lens içine yerleştirilir ve CSS `transform: scale()` ile büyütülür. Cross-origin görsel içeren sayfalarda daha güvenilir. |
-| `'auto'` | `canvas` destekleniyorsa canvas, değilse clone kullanılır. |
+| `'canvas'` | The page is snapshotted into a `<canvas>` via an SVG `foreignObject`; no second DOM tree is created inside the lens, and magnification uses GPU-accelerated `drawImage`. **Recommended.** |
+| `'clone'` | `document.body` is cloned into the lens and scaled with a CSS `transform: scale()`. More reliable on pages with cross-origin images. |
+| `'auto'` | Uses `'canvas'` when supported, otherwise falls back to `'clone'`. |
 
-### Metodlar
+### Methods
 
-| Metod | Açıklama |
+| Method | Description |
 |---|---|
-| `.enable()` | Büyüteci aç |
-| `.disable()` | Büyüteci kapat |
-| `.toggle()` | Aç/kapat |
-| `.isEnabled()` | Açık mı? |
-| `.setOptions(opts)` | Runtime'da seçenekleri güncelle |
-| `.getOptions()` | Mevcut seçenekleri döner |
-| `.destroy()` | Tüm event listener'ları kaldır |
+| `.enable()` | Turn the magnifier on |
+| `.disable()` | Turn the magnifier off |
+| `.toggle()` | Toggle on/off |
+| `.isEnabled()` | Whether it's currently on |
+| `.setOptions(opts)` | Update options at runtime |
+| `.getOptions()` | Get the current options |
+| `.destroy()` | Remove all listeners permanently |
 
-### Klavye kısayolları
+### Keyboard shortcuts
 
-| Kısayol | Eylem |
+| Shortcut | Action |
 |---|---|
-| `Alt + M` | Büyüteci aç / kapat (varsayılan) |
-| `Esc` | Büyüteci kapat |
+| `Alt + M` | Toggle the magnifier (default) |
+| `Esc` | *(not built-in — wire it yourself, see below)* |
 
-## Haber Sitesi Senaryosu
+The shortcut is ignored while focus is inside an `input`, `textarea`, or `contenteditable` element.
+
+## Real-world scenario: a news site
 
 ```js
 const mag = new Magnifier({
@@ -111,18 +145,41 @@ const mag = new Magnifier({
   shortcutWithAlt: true,
 });
 
-// Erişilebilirlik menüsünden açma
+// Wire it to an accessibility menu toggle
 document.querySelector('#accessibility-magnifier-toggle')
   .addEventListener('click', () => mag.toggle());
+
+// Optional: let Esc close it too
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mag.isEnabled()) mag.disable();
+});
 ```
 
-## Notlar / Sınırlamalar
+## Notes & limitations
 
-- **Canvas modu (default):** Sayfa içeriği SVG `foreignObject` ile bir canvas'a yazdırılır; lens içinde ikinci bir DOM ağacı oluşmaz. `drawImage` ile büyütme GPU hızlandırmalıdır. Cross-origin `<img>` veya `<iframe>` öğeleri snapshot'a dahil edilemez (tarayıcı güvenlik kısıtlaması); bu durum haber sitelerinin makale içeriği için nadiren sorun çıkarır.
-- **Clone modu:** Sayfanın DOM clone'u üzerinde CSS scale uygular. `<canvas>` ve cross-origin `<iframe>` içerikleri bu modda da büyütülmüş görünümde gözükmeyebilir. Cross-origin görseller için bu mod tercih edilebilir.
-- `refreshIntervalMs` çok düşürülürse CPU kullanımı artar; varsayılan 500ms çoğu senaryo için uygundur.
-- Klavye kısayolu yazı alanlarında (input/textarea/contenteditable) tetiklenmez.
+- **Canvas mode (default):** page content is written into a canvas via an SVG `foreignObject`; no second DOM tree is created inside the lens. `drawImage` magnification is GPU-accelerated. Cross-origin `<img>` or `<iframe>` elements cannot be captured in the snapshot (a browser security restriction) — this rarely matters for a news site's own article content.
+- **Clone mode:** applies a CSS scale to a DOM clone of the page. `<canvas>` elements and cross-origin `<iframe>` content may not appear magnified in this mode either. Prefer this mode if your page serves cross-origin images.
+- Setting `refreshIntervalMs` very low increases CPU usage; the default (500ms) is fine for most pages.
+- The keyboard shortcut never fires while typing in an input, textarea, or contenteditable element.
 
-## Lisans
+## Development
 
-MIT
+The source is TypeScript (`src/`), built with [tsup](https://tsup.egoist.dev) into four `dist/` bundles: `magnifier.js` (CJS), `magnifier.mjs` (ESM), `magnifier.global.js` / `magnifier.global.min.js` (IIFE, sets `window.Magnifier` — used by the CDN snippet above), plus generated `.d.ts` types.
+
+```bash
+npm install
+npm run storybook        # interactive playground — every option, live
+npm run typecheck        # tsc --noEmit
+npm run build             # produces the dist/ bundles described above
+npm run build-storybook   # static Storybook build (used by CI/Pages deploy)
+```
+
+Contributions, issues, and ideas are welcome — open a PR or an issue on GitHub.
+
+## License
+
+MIT © [Umut Yaldız](https://github.com/umutyaldiz)
+
+## Author
+
+**Umut Yaldız** — [github.com/umutyaldiz](https://github.com/umutyaldiz)

@@ -18,6 +18,16 @@ Görme zorluğu yaşayan kullanıcılar, web'in büyük ve genelde göz ardı ed
 
 Tam bir erişilebilirlik denetiminin yerini tutmaz, ama imleç odaklı bir büyüteç bugün görme zorluğu yaşayan kullanıcılar için somut bir fayda sağlar — ve her site, satın alma sürecine girmeden bunu ekleyebilmeli.
 
+## Mevzuat bağlamı (AB & Türkiye)
+
+Erişilebilirlik, web'in giderek büyüyen bir kesimi için "olsa iyi olur"dan "yasal zorunluluk"a doğru kayıyor — bu kütüphanenin hedeflediği hem kamu hem özel sektör cephesinde:
+
+- **AB — kamu sektörü:** [Web Erişilebilirliği Direktifi (AB) 2016/2102](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016L2102), kamu kurumlarının web sitesi ve uygulamalarında WCAG 2.1 AA uyumluluğunu 2019-2021 arasında (sitenin yaşına göre değişen tarihlerde) zorunlu kıldı.
+- **AB — özel sektör:** [Avrupa Erişilebilirlik Yasası (AB) 2019/882](https://commission.europa.eu/strategy-and-policy/policies/justice-and-fundamental-rights/disability/european-accessibility-act-eaa_en), **28 Haziran 2025**'ten itibaren yürürlükte; [EN 301 549](https://www.etsi.org/deliver/etsi_en/301500_301599/301549/) standardı üzerinden WCAG 2.1 AA'ya denk gereklilikleri e-ticaret, bankacılık, telekomünikasyon ve AB'de tüketiciye sunulan diğer dijital hizmetlere genişletiyor — uyumsuzluk durumunda para cezaları öngörülüyor.
+- **Türkiye:** [5378 sayılı Engelliler Hakkında Kanun](https://www.resmigazete.gov.tr/eskiler/2005/07/20050707-1.htm) ve [Erişilebilirlik İzleme ve Denetleme Yönetmeliği](https://www.resmigazete.gov.tr/eskiler/2013/07/20130720-9.htm) (Resmî Gazete 20.07.2013, Sayı 28713; değişiklik 21.09.2016, Sayı 29834), kamu kurumlarının dijital hizmetlerinin erişilebilirlik açısından izlenmesini zaten zorunlu kılıyor.
+
+Bunların hiçbiri "ekranda büyüteç bulunmalı" diye özel bir gereklilik saymıyor ve kapsam detayları önemli — herhangi birini uyumluluk tavsiyesi olarak görmeden önce orijinal metni okuyun. Ama yön net: WCAG 2.1 AA, hem kamu hem özel sektörde giderek daha fazla sitenin taban çizgisi haline geliyor ve imleç odaklı büyütme, [1.4.4 Metni Yeniden Boyutlandırma](https://www.w3.org/WAI/WCAG21/Understanding/resize-text.html) ve [1.4.10 Reflow](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) gibi WCAG başarı ölçütlerini doğrudan destekliyor. Bir denetimden ya da yasal son tarihten önce böyle bir araç eklemek, gereksiz mühendislik değil ucuz bir sigorta.
+
 ## Özellikler
 
 - ⚙️ Sıfır runtime bağımlılığı, TypeScript ile yazıldı, minified ~11 KB

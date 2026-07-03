@@ -73,7 +73,7 @@ export function createLens(options: ResolvedMagnifierOptions, renderMode: Magnif
       position: 'absolute',
       left: '0',
       top: '0',
-      width: `${window.innerWidth}px`,
+      width: `${document.documentElement.clientWidth}px`,
       height: `${window.innerHeight}px`,
       transformOrigin: '0 0',
       pointerEvents: 'none',

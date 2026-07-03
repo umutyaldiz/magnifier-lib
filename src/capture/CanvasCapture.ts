@@ -42,7 +42,10 @@ export class CanvasCapture {
   }
 
   private captureToCanvas(): Promise<void> {
-    const pw = window.innerWidth;
+    // clientWidth (not innerWidth) — innerWidth includes the scrollbar, which
+    // would make the snapshot's containing block wider than the live page's
+    // actual content width and shift centered/fluid layouts to the right.
+    const pw = document.documentElement.clientWidth;
     const ph = document.documentElement.scrollHeight;
 
     return new Promise((resolve) => {

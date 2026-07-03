@@ -18,6 +18,16 @@ Low-vision readers are a huge, under-served slice of the web's audience, and mos
 
 It doesn't replace a full accessibility audit, but a pointer-driven magnifier is concretely useful for low-vision users today, and every site should be able to add one without a procurement process.
 
+## Regulatory context (EU & Turkey)
+
+Accessibility is moving from "nice to have" to "legally required" for a growing share of the web, on both fronts this library targets:
+
+- **EU — public sector:** the [Web Accessibility Directive (EU) 2016/2102](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016L2102) has required WCAG 2.1 AA conformance for public sector websites and apps since 2019–2021 (rollout dates varied by site age).
+- **EU — private sector:** the [European Accessibility Act (EU) 2019/882](https://commission.europa.eu/strategy-and-policy/policies/justice-and-fundamental-rights/disability/european-accessibility-act-eaa_en) has applied since **28 June 2025**, extending WCAG 2.1 AA-equivalent requirements (via [EN 301 549](https://www.etsi.org/deliver/etsi_en/301500_301599/301549/)) to e-commerce, banking, telecom, and other consumer-facing digital services sold in the EU — with fines for non-compliance.
+- **Turkey:** [Law No. 5378 on Persons with Disabilities](https://www.resmigazete.gov.tr/eskiler/2005/07/20050707-1.htm) and the [Erişilebilirlik İzleme ve Denetleme Yönetmeliği](https://www.resmigazete.gov.tr/eskiler/2013/07/20130720-9.htm) (Official Gazette 20.07.2013 No. 28713, amended 21.09.2016 No. 29834) already require public institutions' digital services to be monitored for accessibility.
+
+None of these name "a screen magnifier" as a specific requirement, and scope details matter — read the source text before treating any of this as compliance advice. But the direction is consistent: WCAG 2.1 AA is becoming the baseline across an increasing share of public **and** private sites, and pointer-driven magnification directly supports WCAG success criteria like [1.4.4 Resize Text](https://www.w3.org/WAI/WCAG21/Understanding/resize-text.html) and [1.4.10 Reflow](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html). Adding a tool like this ahead of an audit or a legal deadline is cheap insurance, not overengineering.
+
 ## Features
 
 - ⚙️ Zero runtime dependencies, written in TypeScript, ~11 KB minified

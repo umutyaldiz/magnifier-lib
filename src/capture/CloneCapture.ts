@@ -19,13 +19,13 @@ export class CloneCapture {
         position: 'absolute',
         left: '0',
         top: '0',
-        width: `${window.innerWidth}px`,
+        width: `${document.documentElement.clientWidth}px`,
         margin: '0',
         padding: getComputedStyle(body).padding,
         pointerEvents: 'none',
       });
       while (this.inner.firstChild) this.inner.removeChild(this.inner.firstChild);
-      this.inner.style.width = `${window.innerWidth}px`;
+      this.inner.style.width = `${document.documentElement.clientWidth}px`;
       this.inner.style.height = `${document.documentElement.scrollHeight}px`;
       clone.style.top = '0px';
       this.inner.appendChild(clone);

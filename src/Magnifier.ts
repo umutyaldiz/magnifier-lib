@@ -6,7 +6,7 @@ import { createLens, getLensSize } from './lens/createLens';
 import { CanvasCapture } from './capture/CanvasCapture';
 import { CloneCapture } from './capture/CloneCapture';
 
-const VERSION = '2.0.1';
+const VERSION = '2.0.2';
 
 /**
  * Cursor-following, shape-configurable screen magnifier with zero runtime
@@ -278,11 +278,21 @@ export class Magnifier {
       // Canvas mode: copy the magnified region of the page snapshot into the
       // lens canvas. drawImage's source→destination scaling is the zoom —
       // no CSS transform needed.
+      const { x: scaleX, y: scaleY } = this.canvasCapture.scale;
       const z = opt.zoom;
-      const srcW = lensW / z;
-      const srcH = lensH / z;
-      const srcX = this.mouseX - srcW / 2;
-      const srcY = this.mouseY + window.scrollY - srcH / 2;
+
+      // Compute the sample region in logical (CSS) page pixels first — this
+      // is the same coordinate space as mouseX/mouseY/scrollY — then convert
+      // to the snapshot's actual pixel space via the measured scale factor.
+      const srcWLogical = lensW / z;
+      const srcHLogical = lensH / z;
+      const srcXLogical = this.mouseX - srcWLogical / 2;
+      const srcYLogical = this.mouseY + window.scrollY - srcHLogical / 2;
+
+      const srcW = srcWLogical * scaleX;
+      const srcH = srcHLogical * scaleY;
+      const srcX = srcXLogical * scaleX;
+      const srcY = srcYLogical * scaleY;
 
       const maxX = pageCanvas.width - srcW;
       const maxY = pageCanvas.height - srcH;

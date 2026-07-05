@@ -58,15 +58,6 @@ function renderDemo(args) {
 
 export default {
   title: 'Magnifier/Playground',
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Every constructor option, live. Change a control on the right and the lens on the canvas updates immediately — this is the fastest way to see the full surface of the library.',
-      },
-    },
-  },
   render: renderDemo,
   argTypes: {
     shape: { control: 'select', options: ['circle', 'square', 'rectangle'], description: 'Lens shape.' },

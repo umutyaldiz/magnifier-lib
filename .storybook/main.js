@@ -3,16 +3,13 @@ const path = require('path');
 /** @type {import('@storybook/html-vite').StorybookConfig} */
 const config = {
   stories: ['../stories/**/*.stories.js', '../stories/**/*.mdx'],
-  addons: ['@storybook/addon-essentials'],
+  addons: [{ name: '@storybook/addon-essentials', options: { docs: false } }],
   framework: {
     name: '@storybook/html-vite',
     options: {},
   },
   core: {
     disableTelemetry: true,
-  },
-  docs: {
-    defaultName: 'Docs',
   },
   async viteFinal(viteConfig) {
     const { default: tailwindcss } = await import('@tailwindcss/vite');

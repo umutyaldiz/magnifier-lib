@@ -9,6 +9,11 @@ export class CanvasCapture {
   private ready = false;
   private inProgress = false;
 
+  // Device pixels per logical (CSS) page pixel, measured from the actual
+  // rasterized snapshot rather than assumed — see captureToCanvas().
+  private scaleX = 1;
+  private scaleY = 1;
+
   constructor(private readonly onCaptured: () => void) {}
 
   get isReady(): boolean {
@@ -17,6 +22,10 @@ export class CanvasCapture {
 
   get source(): HTMLCanvasElement | null {
     return this.pageCanvas;
+  }
+
+  get scale(): { x: number; y: number } {
+    return { x: this.scaleX, y: this.scaleY };
   }
 
   init(): void {
@@ -39,6 +48,8 @@ export class CanvasCapture {
     this.pageCanvas = null;
     this.ready = false;
     this.inProgress = false;
+    this.scaleX = 1;
+    this.scaleY = 1;
   }
 
   private captureToCanvas(): Promise<void> {
@@ -68,8 +79,19 @@ export class CanvasCapture {
         const serialized = new XMLSerializer().serializeToString(htmlEl);
 
         // HTML wrapped in an SVG foreignObject → Image → Canvas.
+        //
+        // `width`/`height` on the outer <svg> request the actual raster
+        // resolution (device pixels, for crisp HiDPI output); `viewBox`
+        // keeps the foreignObject's own coordinate system in logical CSS
+        // pixels (matching `pw`/`ph`, i.e. the live page's real layout
+        // width) so the embedded page reflows identically to how it
+        // renders on screen — not wider/narrower, which would silently
+        // shift where content ends up relative to the cursor.
+        const dpr = window.devicePixelRatio || 1;
+        const rasterW = Math.round(pw * dpr);
+        const rasterH = Math.round(ph * dpr);
         const svgStr =
-          `<svg xmlns="http://www.w3.org/2000/svg" width="${pw}" height="${ph}">` +
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${rasterW}" height="${rasterH}" viewBox="0 0 ${pw} ${ph}">` +
           `<foreignObject x="0" y="0" width="${pw}" height="${ph}">` +
           serialized +
           `</foreignObject></svg>`;
@@ -80,12 +102,20 @@ export class CanvasCapture {
 
         img.onload = () => {
           if (this.pageCanvas) {
-            this.pageCanvas.width = pw;
-            this.pageCanvas.height = ph;
+            // Never assume the browser rasterized at exactly rasterW×rasterH —
+            // measure it and draw 1:1. Force-stretching a mismatched source
+            // into a fixed size (the previous approach) silently distorts the
+            // scale, which is what was throwing the lens sampling off.
+            const naturalW = img.naturalWidth || rasterW;
+            const naturalH = img.naturalHeight || rasterH;
+            this.pageCanvas.width = naturalW;
+            this.pageCanvas.height = naturalH;
+            this.scaleX = naturalW / pw;
+            this.scaleY = naturalH / ph;
             const ctx = this.pageCanvas.getContext('2d');
             if (ctx) {
-              ctx.clearRect(0, 0, pw, ph);
-              ctx.drawImage(img, 0, 0, pw, ph);
+              ctx.clearRect(0, 0, naturalW, naturalH);
+              ctx.drawImage(img, 0, 0, naturalW, naturalH);
             }
             this.ready = true;
             this.onCaptured();

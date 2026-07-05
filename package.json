@@ -1,6 +1,6 @@
 {
   "name": "a11y-magnifier",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Zero-dependency, cursor-following screen magnifier widget for the web — built for low-vision accessibility on news sites and content-heavy pages.",
   "type": "commonjs",
   "main": "dist/magnifier.js",

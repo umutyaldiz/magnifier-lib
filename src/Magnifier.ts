@@ -6,7 +6,7 @@ import { createLens, getLensSize } from './lens/createLens';
 import { CanvasCapture } from './capture/CanvasCapture';
 import { CloneCapture } from './capture/CloneCapture';
 
-const VERSION = '2.0.2';
+const VERSION = '2.0.3';
 
 /**
  * Cursor-following, shape-configurable screen magnifier with zero runtime

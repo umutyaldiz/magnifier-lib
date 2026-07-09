@@ -1,4 +1,39 @@
 /**
+ * Replaces cloned <link rel="stylesheet"> tags with the CSS already parsed
+ * for the live page (read synchronously from `document.styleSheets`).
+ *
+ * A foreignObject's cloned content is a fresh, isolated rendering context —
+ * external stylesheets referenced by <link> have to be re-fetched inside it,
+ * an async load with no guarantee of finishing before the SVG rasterizes.
+ * When it loses that race, the snapshot renders with the stylesheet only
+ * partially (or never) applied: every layout rule depending on it — a
+ * centered `max-width` container, for instance — computes against the
+ * browser's unstyled defaults instead, so content can render shifted from
+ * where it actually sits on the live page. Inlining already-parsed CSS
+ * removes that race entirely.
+ */
+function inlineStylesheets(clonedHead: Element): void {
+  const links = Array.from(clonedHead.querySelectorAll('link[rel="stylesheet"]'));
+  for (const link of links) {
+    const href = (link as HTMLLinkElement).href;
+    const sheet = Array.from(document.styleSheets).find((s) => s.href === href);
+    if (!sheet) continue;
+    try {
+      const cssText = Array.from(sheet.cssRules)
+        .map((rule) => rule.cssText)
+        .join('\n');
+      const style = document.createElement('style');
+      style.textContent = cssText;
+      link.replaceWith(style);
+    } catch (e) {
+      // Cross-origin stylesheet — cssRules access is blocked by CORS.
+      // Leave the <link> in place; the <base> tag gives it a shot at
+      // resolving, best-effort only.
+    }
+  }
+}
+
+/**
  * Snapshots the page into an off-screen <canvas> by serializing the current
  * document into an SVG `foreignObject`, rasterizing that through an <img>,
  * and drawing the result into the canvas. This avoids creating a second DOM
@@ -65,7 +100,22 @@ export class CanvasCapture {
         const htmlEl = document.documentElement.cloneNode(true) as HTMLElement;
         htmlEl.querySelectorAll('[data-magnifier-lens], script, noscript').forEach((el) => el.remove());
 
-        // Add a <base> for relative URLs.
+        // Pin <html>/<body> to an explicit, unambiguous width. Without this,
+        // a foreignObject's containing block for its cloned content isn't
+        // reliably `pw` px wide across browsers — any centered/max-width
+        // layout (e.g. Tailwind's `mx-auto`) then computes its margins
+        // against the wrong reference width and renders shifted left
+        // relative to where it actually sits on the live page.
+        htmlEl.style.setProperty('width', `${pw}px`, 'important');
+        htmlEl.style.setProperty('margin', '0', 'important');
+        const bodyEl = htmlEl.querySelector('body');
+        if (bodyEl instanceof HTMLElement) {
+          bodyEl.style.setProperty('width', `${pw}px`, 'important');
+          bodyEl.style.setProperty('margin', '0', 'important');
+        }
+
+        // Add a <base> for relative URLs, and inline stylesheets so layout
+        // doesn't depend on winning a re-fetch race inside the snapshot.
         const head = htmlEl.querySelector('head');
         if (head) {
           let base = htmlEl.querySelector('base');
@@ -74,6 +124,7 @@ export class CanvasCapture {
             base.href = document.baseURI || location.href;
             head.insertBefore(base, head.firstChild);
           }
+          inlineStylesheets(head);
         }
 
         const serialized = new XMLSerializer().serializeToString(htmlEl);

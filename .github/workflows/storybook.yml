@@ -28,6 +28,12 @@ jobs:
       - run: npm ci
       - run: npm run build-storybook
 
+      # Lets the deployed page detect a newer deploy and auto-reload itself —
+      # see .storybook/manager-head.html. GitHub Pages hardcodes ~10min edge
+      # caching with no way to override response headers, so this is what
+      # actually defeats staleness for tabs left open across a deploy.
+      - run: echo "${{ github.sha }}" > storybook-static/BUILD_ID
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,0 +1,36 @@
+<script>
+  // GitHub Pages hardcodes edge caching and gives us no way to set
+  // Cache-Control headers, so a tab left open across a new deploy would
+  // otherwise keep showing (or worse, break against deleted hashed asset
+  // files from) the old build. Poll a small build-id file with a
+  // cache-busting fetch and force a fresh navigation when it changes.
+  (function () {
+    var BUILD_ID_URL = 'BUILD_ID';
+    var POLL_MS = 60000;
+    var currentId = null;
+
+    function check() {
+      fetch(BUILD_ID_URL, { cache: 'no-store' })
+        .then(function (res) { return res.ok ? res.text() : null; })
+        .then(function (id) {
+          if (!id) return;
+          id = id.trim();
+          if (currentId === null) {
+            currentId = id;
+            return;
+          }
+          if (id !== currentId) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('_cb', Date.now().toString());
+            window.location.replace(url.toString());
+          }
+        })
+        .catch(function () {
+          /* offline or BUILD_ID missing (e.g. local dev) — ignore */
+        });
+    }
+
+    check();
+    setInterval(check, POLL_MS);
+  })();
+</script>
